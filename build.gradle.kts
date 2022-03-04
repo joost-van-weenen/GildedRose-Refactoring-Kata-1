@@ -23,6 +23,21 @@ tasks.test {
 	testLogging {
 		events("passed", "skipped", "failed")
 	}
+	finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
+jacoco {
+	toolVersion = "0.8.7"
+}
+
+tasks.jacocoTestReport {
+	reports {
+		xml.required.set(true)
+	}
 }
 
 // config JVM target to 1.8 for kotlin compilation tasks
