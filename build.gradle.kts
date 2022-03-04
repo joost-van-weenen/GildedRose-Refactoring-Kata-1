@@ -34,6 +34,12 @@ jacoco {
 	toolVersion = "0.8.7"
 }
 
+tasks.jacocoTestReport {
+	reports {
+		xml.required.set(true)
+	}
+}
+
 // config JVM target to 1.8 for kotlin compilation tasks
 tasks.withType<KotlinCompile>().configureEach {
 	kotlinOptions.jvmTarget = "1.8"
