@@ -5,57 +5,79 @@ class GildedRose(var items: Array<Item>) {
     fun updateQuality() {
         for (item in items) {
             if (item.name != "Aged Brie" && item.name != "Backstage passes to a TAFKAL80ETC concert") {
-                if (item.quality > 0) {
-                    if (item.name != "Sulfuras, Hand of Ragnaros") {
-                        item.quality = item.quality - 1
+                if (item.hasQuality()) {
+                    if (!item.isLegendary()) {
+                        item.increaseQuality(-1)
                     }
                 }
             } else {
-                if (item.quality < 50) {
-                    item.quality = item.quality + 1
+                if (!item.hasMaxQuality()) {
+                    item.increaseQuality()
 
                     if (item.name == "Backstage passes to a TAFKAL80ETC concert") {
-                        if (item.sellIn < 11) {
-                            if (item.quality < 50) {
-                                item.quality = item.quality + 1
+                        if (item.isSellDateReached(11)) {
+                            if (!item.hasMaxQuality()) {
+                                item.increaseQuality()
                             }
                         }
 
-                        if (item.sellIn < 6) {
-                            if (item.quality < 50) {
-                                item.quality = item.quality + 1
+                        if (item.isSellDateReached(6)) {
+                            if (!item.hasMaxQuality()) {
+                                item.increaseQuality()
                             }
                         }
                     }
                 }
             }
 
-            if (item.name != "Sulfuras, Hand of Ragnaros") {
-                item.sellIn = item.sellIn - 1
+            if (!item.isLegendary()) {
+                item.decreaseSellin()
             }
 
-            if (item.sellIn < 0) {
+            if (item.isSellDateReached()) {
                 if (item.name != "Aged Brie") {
                     if (item.name != "Backstage passes to a TAFKAL80ETC concert") {
-                        if (item.quality > 0) {
-                            if (item.name != "Sulfuras, Hand of Ragnaros") {
-                                item.quality = item.quality - 1
+                        if (item.hasQuality()) {
+                            if (!item.isLegendary()) {
+                                item.increaseQuality(-1)
+
                             }
                         }
                     } else {
-                        item.quality = item.quality - item.quality
+                        item.dropQualityToZero()
                     }
                 } else {
-                    if (item.quality < 50) {
-                        item.quality = item.quality + 1
+                    if (!item.hasMaxQuality()) {
+                        item.increaseQuality()
                     }
                 }
             }
         }
     }
 
+
+
+
+}
+private fun Item.isSellDateReached(daysToSell: Int = 0 ) = sellIn < daysToSell
+
+private fun Item.hasQuality() = quality > 0
+
+private fun Item.hasMaxQuality() = quality >= 50
+
+fun Item.isLegendary() = name == "Sulfuras, Hand of Ragnaros"
+
+fun Item.dropQualityToZero() {
+    quality = 0
 }
 
+fun Item.decreaseSellin(value: Int = 1) {
+    sellIn -= value
+}
+
+fun Item.increaseQuality(value: Int = 1) {
+    quality += value
+}
 
 open class Item(var name: String, var sellIn: Int, var quality: Int) {
     override fun toString(): String {
