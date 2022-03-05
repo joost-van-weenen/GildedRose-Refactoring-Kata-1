@@ -1,6 +1,6 @@
 package com.gildedrose
 
-class GildedRose(var items: Array<Item>) {
+class GildedRose(private var items: Array<Item>) {
     init {
         if (items.any { it !is ShopItem }) {
             throw IllegalArgumentException("Items may only contain objects of type ShopItem")
@@ -10,52 +10,55 @@ class GildedRose(var items: Array<Item>) {
     fun updateQuality() {
         items.forEach {
             it as ShopItem
-            it.updateSellIn()
+            it.decreaseSellIn()
             it.updateQuality()
         }
     }
 }
 
-open class Item(var name: String, var sellIn: Int, var quality: Int) {
+open class Item(private var name: String, var sellIn: Int, var quality: Int) {
     override fun toString(): String {
         return this.name + ", " + this.sellIn + ", " + this.quality
     }
 }
 
+private const val MAX_ITEM_QUALITY = 50
+private const val MIN_ITEM_QUALITY = 0
+
 open class ShopItem(name: String, sellIn: Int, quality: Int) : Item(name, sellIn, quality) {
     open fun updateQuality() {
         decreaseQuality()
-        if (sellIn <= 0) {
-            quality = 0
-        }
+        voidItemQualityWhenSellDateReached()
     }
 
-    open fun updateSellIn() {
+    open fun decreaseSellIn() {
         sellIn -= 1
     }
-    fun isSellDateReached(daysToSell: Int = 0) = sellIn < daysToSell
-
 
     fun decreaseQuality(value: Int = 1) {
-        if (quality > 0) {
+        if (quality > MIN_ITEM_QUALITY) {
             quality -= value
         }
-        if (quality < 0) {
-            quality = 0
-        }
+        voidItemQualityWhenSellDateReached()
     }
+
     fun increaseQuality(value: Int = 1) {
-        if (quality < 50) {
+        if (quality < MAX_ITEM_QUALITY) {
             quality += value
         }
     }
 
+    fun isSellDateReached(daysToSell: Int) = sellIn < daysToSell
 
-
+    fun voidItemQualityWhenSellDateReached() {
+        if (isSellDateReached(MIN_ITEM_QUALITY)) {
+            quality = MIN_ITEM_QUALITY
+        }
+    }
 }
 
-open class Sulfuras() : ShopItem("Sulfuras, Hand of Ragnaros", 0, 80) {
-    override fun updateSellIn() {
+open class Sulfuras : ShopItem("Sulfuras, Hand of Ragnaros", MIN_ITEM_QUALITY, 80) {
+    override fun decreaseSellIn() {
         // Never update sellIn value
     }
     override fun updateQuality() {
@@ -73,10 +76,7 @@ open class BackstagePass(sellIn: Int, quality: Int) :
         if (isSellDateReached(6)) {
             increaseQuality()
         }
-
-        if (isSellDateReached(0)) {
-            quality = 0
-        }
+        voidItemQualityWhenSellDateReached()
     }
 }
 
@@ -86,7 +86,6 @@ open class AgedBrie(sellIn: Int, quality: Int) :
         increaseQuality()
     }
 }
-
 
 open class Conjured(sellIn: Int, quality: Int) :
     ShopItem("Conjured Mana Cake", sellIn, quality) {
