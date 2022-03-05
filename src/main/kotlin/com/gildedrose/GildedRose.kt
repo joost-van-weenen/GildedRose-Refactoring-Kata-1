@@ -22,6 +22,7 @@ open class Item(private var name: String, var sellIn: Int, var quality: Int) {
     }
 }
 
+private const val LEGENDARY_ITEM_QUALITY = 80
 private const val MAX_ITEM_QUALITY = 50
 private const val MIN_ITEM_QUALITY = 0
 
@@ -46,18 +47,22 @@ open class ShopItem(name: String, sellIn: Int, quality: Int) : Item(name, sellIn
         if (quality < MAX_ITEM_QUALITY) {
             quality += value
         }
+        if (quality > MAX_ITEM_QUALITY) {
+            quality = MAX_ITEM_QUALITY
+        }
     }
 
     fun isSellDateReached(daysToSell: Int) = sellIn < daysToSell
 
     fun voidItemQualityWhenSellDateReached() {
-        if (isSellDateReached(MIN_ITEM_QUALITY)) {
+        if (isSellDateReached(0)) {
             quality = MIN_ITEM_QUALITY
         }
     }
 }
 
-open class Sulfuras : ShopItem("Sulfuras, Hand of Ragnaros", MIN_ITEM_QUALITY, 80) {
+
+open class Sulfuras : ShopItem("Sulfuras, Hand of Ragnaros", 0, LEGENDARY_ITEM_QUALITY) {
     override fun decreaseSellIn() {
         // Never update sellIn value
     }
