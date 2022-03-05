@@ -52,26 +52,36 @@ import org.junit.jupiter.api.Disabled
 @Suppress("DANGEROUS_CHARACTERS")
 internal class GildedRoseTest {
 
+    @Test
+    fun `Can only add ShopItems to GildedRose`() {
+        assertThatThrownBy {
+            GildedRose(arrayOf(Item("item1", 1, 1)))
+        }.isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessage("Items may only contain objects of type ShopItem")
+
+
+    }
+
 //- All items have a SellIn value which denotes the number of days we have to sell the item
 //- All items have a Quality value which denotes how valuable the item is
 //- At the end of each day our system lowers both values for every item
     @Test
     fun `At the end of each day our system lowers both values for every item`() {
-        val items = arrayOf(
-            Item("item1", 1, 1),
-            Item("item2", 2, 2))
+        val items = arrayOf<Item>(
+            ShopItem("item1", 1, 1),
+            ShopItem("item2", 2, 2))
         val app = GildedRose(items)
 
         app.updateQuality()
 
         assertThat(items).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            Item("item1", 0, 0),
-            Item("item2", 1, 1))
+            ShopItem("item1", 0, 0),
+            ShopItem("item2", 1, 1))
     }
 
     @Test
     fun `Once the sell by date has passed, Quality degrades twice as fast`() {
-        val item = Item("item1", 0, 2)
+        val item = ShopItem("item1", 0, 2)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -82,7 +92,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `The Quality of an item is never negative`() {
-        val item = Item("item1", 0, 0)
+        val item = ShopItem("item1", 0, 0)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -92,7 +102,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `"Aged Brie" actually increases in Quality the older it gets`() {
-        val item = Item("Aged Brie", 0, 5)
+        val item = ShopItem("Aged Brie", 0, 5)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -103,7 +113,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `The Quality of an item is never more than 50`() {
-        val item = Item("Aged Brie", 1, 50)
+        val item = ShopItem("Aged Brie", 1, 50)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -113,7 +123,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `"Sulfuras, Hand of Ragnaros", being a legendary item, never has to be sold or decreases in Quality`() {
-        val item = Item("Sulfuras, Hand of Ragnaros", 0, 80)
+        val item = ShopItem("Sulfuras, Hand of Ragnaros", 0, 80)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -124,7 +134,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `"Backstage passes to a TAFKAL80ETC concert" increases in Quality as its SellIn value approaches`() {
-        val item = Item("Backstage passes to a TAFKAL80ETC concert", 15, 20)
+        val item = ShopItem("Backstage passes to a TAFKAL80ETC concert", 15, 20)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -135,7 +145,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `"Backstage passes to a TAFKAL80ETC concert" increases double in Quality as its SellIn value approaches`() {
-        val item = Item("Backstage passes to a TAFKAL80ETC concert", 10, 20)
+        val item = ShopItem("Backstage passes to a TAFKAL80ETC concert", 10, 20)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -146,7 +156,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `"Backstage passes to a TAFKAL80ETC concert" increases triple in Quality as its SellIn value approaches`() {
-        val item = Item("Backstage passes to a TAFKAL80ETC concert", 5, 20)
+        val item = ShopItem("Backstage passes to a TAFKAL80ETC concert", 5, 20)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -157,7 +167,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `"Backstage passes to a TAFKAL80ETC concert" increases drop to zero when concert is over`() {
-        val item = Item("Backstage passes to a TAFKAL80ETC concert", 0, 20)
+        val item = ShopItem("Backstage passes to a TAFKAL80ETC concert", 0, 20)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -169,7 +179,7 @@ internal class GildedRoseTest {
     @Disabled
     @Test
     fun `"Conjured" items degrade in Quality twice as fast as normal items`() {
-        val item = Item("Conjured Mana Cake", 3, 6)
+        val item = ShopItem("Conjured Mana Cake", 3, 6)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()

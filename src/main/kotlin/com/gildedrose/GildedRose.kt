@@ -2,7 +2,15 @@ package com.gildedrose
 
 class GildedRose(var items: Array<Item>) {
 
+    init {
+        if (items.any { it !is ShopItem }) {
+            throw IllegalArgumentException("Items may only contain objects of type ShopItem")
+        }
+    }
+
     fun updateQuality() {
+
+
         for (item in items) {
             if (item.name != "Aged Brie" && item.name != "Backstage passes to a TAFKAL80ETC concert") {
                 if (item.hasQuality()) {
@@ -82,5 +90,11 @@ fun Item.increaseQuality(value: Int = 1) {
 open class Item(var name: String, var sellIn: Int, var quality: Int) {
     override fun toString(): String {
         return this.name + ", " + this.sellIn + ", " + this.quality
+    }
+}
+
+open class ShopItem(name: String, sellIn: Int, quality: Int) : Item(name, sellIn, quality) {
+    fun updateQuality() {
+        quality -= 1
     }
 }
