@@ -52,18 +52,15 @@ import org.assertj.core.api.Assertions.*
 internal class GildedRoseTest {
 
     @Test
-    fun `Can only add ShopItems to GildedRose`() {
+    fun `Verify that only ShopItems can be added to GildedRose`() {
         assertThatThrownBy {
             GildedRose(arrayOf(Item("item1", 1, 1)))
         }.isInstanceOf(IllegalArgumentException::class.java)
             .hasMessage("Items may only contain objects of type ShopItem")
     }
 
-//- All items have a SellIn value which denotes the number of days we have to sell the item
-//- All items have a Quality value which denotes how valuable the item is
-//- At the end of each day our system lowers both values for every item
     @Test
-    fun `At the end of each day our system lowers both values for every item`() {
+    fun `Verify that at the end of each day GildedRose lowers both Quality and SellIn for every item`() {
         val items = arrayOf<Item>(
             ShopItem("item1", 1, 1),
             ShopItem("item2", 2, 2))
@@ -77,7 +74,7 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `Once the sell by date has passed, Quality degrades twice as fast`() {
+    fun `Verify that once the sell by date has passed, quality degrades twice as fast`() {
         val item = ShopItem("item1", 0, 2)
         val app = GildedRose(arrayOf(item))
 
@@ -88,7 +85,7 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `The Quality of an item is never negative`() {
+    fun `Verify that the quality of an item is never negative`() {
         val item = ShopItem("item1", 0, 0)
         val app = GildedRose(arrayOf(item))
 
@@ -98,7 +95,7 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `"Aged Brie" actually increases in Quality the older it gets`() {
+    fun `Verify that "Aged Brie" increases in quality the older it gets`() {
         val item = AgedBrie( 0, 5)
         val app = GildedRose(arrayOf(item))
 
@@ -109,7 +106,7 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `The Quality of an item is never more than 50`() {
+    fun `Verify that the Quality of an item never exceeds 50`() {
         val item = AgedBrie(1, 50)
         val app = GildedRose(arrayOf(item))
 
@@ -119,7 +116,7 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `"Sulfuras, Hand of Ragnaros", being a legendary item, never has to be sold or decreases in Quality`() {
+    fun `Verify that "Sulfuras, Hand of Ragnaros", never has to be sold or decreases in Quality`() {
         val item = Sulfuras()
         val app = GildedRose(arrayOf(item))
 
@@ -130,7 +127,7 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `"Backstage passes to a TAFKAL80ETC concert" increases in Quality as its SellIn value approaches`() {
+    fun `Verify that "Backstage passes to a TAFKAL80ETC concert" increases in quality as its SellIn value approaches`() {
         val item = BackstagePass( 15, 20)
         val app = GildedRose(arrayOf(item))
 
@@ -141,7 +138,7 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `"Backstage passes to a TAFKAL80ETC concert" increases double in Quality as its SellIn value approaches`() {
+    fun `Verify that "Backstage passes to a TAFKAL80ETC concert" increases double in quality as its SellIn value approaches`() {
         val item = BackstagePass( 10, 20)
         val app = GildedRose(arrayOf(item))
 
@@ -152,7 +149,7 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `"Backstage passes to a TAFKAL80ETC concert" increases triple in Quality as its SellIn value approaches`() {
+    fun `Verify that "Backstage passes to a TAFKAL80ETC concert" increases trice in Quality as its SellIn value approaches`() {
         val item = BackstagePass( 5, 20)
         val app = GildedRose(arrayOf(item))
 
@@ -163,7 +160,7 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `"Backstage passes to a TAFKAL80ETC concert" increases drop to zero when concert is over`() {
+    fun `Verify that "Backstage passes to a TAFKAL80ETC concert" quality drops to zero when concert is over`() {
         val item = BackstagePass(0, 20)
         val app = GildedRose(arrayOf(item))
 
@@ -174,7 +171,7 @@ internal class GildedRoseTest {
     }
 
     @Test
-    fun `"Conjured" items degrade in Quality twice as fast as normal items`() {
+    fun `Verify "Conjured" items degrade in quality twice as fast as normal items`() {
         val item = Conjured(3, 6)
         val app = GildedRose(arrayOf(item))
 
