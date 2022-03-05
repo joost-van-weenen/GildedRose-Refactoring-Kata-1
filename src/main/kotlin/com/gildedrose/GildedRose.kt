@@ -1,7 +1,6 @@
 package com.gildedrose
 
 class GildedRose(var items: Array<Item>) {
-
     init {
         if (items.any { it !is ShopItem }) {
             throw IllegalArgumentException("Items may only contain objects of type ShopItem")
@@ -9,82 +8,12 @@ class GildedRose(var items: Array<Item>) {
     }
 
     fun updateQuality() {
-
-
-        for (item in items) {
-            if (item.name != "Aged Brie" && item.name != "Backstage passes to a TAFKAL80ETC concert") {
-                if (item.hasQuality()) {
-                    if (!item.isLegendary()) {
-                        item.increaseQuality(-1)
-                    }
-                }
-            } else {
-                if (!item.hasMaxQuality()) {
-                    item.increaseQuality()
-
-                    if (item.name == "Backstage passes to a TAFKAL80ETC concert") {
-                        if (item.isSellDateReached(11)) {
-                            if (!item.hasMaxQuality()) {
-                                item.increaseQuality()
-                            }
-                        }
-
-                        if (item.isSellDateReached(6)) {
-                            if (!item.hasMaxQuality()) {
-                                item.increaseQuality()
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (!item.isLegendary()) {
-                item.decreaseSellin()
-            }
-
-            if (item.isSellDateReached()) {
-                if (item.name != "Aged Brie") {
-                    if (item.name != "Backstage passes to a TAFKAL80ETC concert") {
-                        if (item.hasQuality()) {
-                            if (!item.isLegendary()) {
-                                item.increaseQuality(-1)
-
-                            }
-                        }
-                    } else {
-                        item.dropQualityToZero()
-                    }
-                } else {
-                    if (!item.hasMaxQuality()) {
-                        item.increaseQuality()
-                    }
-                }
-            }
+        items.forEach {
+            it as ShopItem
+            it.updateSellIn()
+            it.updateQuality()
         }
     }
-
-
-
-
-}
-private fun Item.isSellDateReached(daysToSell: Int = 0 ) = sellIn < daysToSell
-
-private fun Item.hasQuality() = quality > 0
-
-private fun Item.hasMaxQuality() = quality >= 50
-
-fun Item.isLegendary() = name == "Sulfuras, Hand of Ragnaros"
-
-fun Item.dropQualityToZero() {
-    quality = 0
-}
-
-fun Item.decreaseSellin(value: Int = 1) {
-    sellIn -= value
-}
-
-fun Item.increaseQuality(value: Int = 1) {
-    quality += value
 }
 
 open class Item(var name: String, var sellIn: Int, var quality: Int) {
@@ -94,7 +23,74 @@ open class Item(var name: String, var sellIn: Int, var quality: Int) {
 }
 
 open class ShopItem(name: String, sellIn: Int, quality: Int) : Item(name, sellIn, quality) {
-    fun updateQuality() {
-        quality -= 1
+    open fun updateQuality() {
+        decreaseQuality()
+        if (sellIn <= 0) {
+            quality = 0
+        }
+    }
+
+    open fun updateSellIn() {
+        sellIn -= 1
+    }
+    fun isSellDateReached(daysToSell: Int = 0) = sellIn < daysToSell
+
+
+    fun decreaseQuality(value: Int = 1) {
+        if (quality > 0) {
+            quality -= value
+        }
+        if (quality < 0) {
+            quality = 0
+        }
+    }
+    fun increaseQuality(value: Int = 1) {
+        if (quality < 50) {
+            quality += value
+        }
+    }
+
+
+
+}
+
+open class Sulfuras() : ShopItem("Sulfuras, Hand of Ragnaros", 0, 80) {
+    override fun updateSellIn() {
+        // Never update sellIn value
+    }
+    override fun updateQuality() {
+        // Never updates its quality
+    }
+}
+
+open class BackstagePass(sellIn: Int, quality: Int) :
+    ShopItem("Backstage passes to a TAFKAL80ETC concert", sellIn, quality) {
+    override fun updateQuality() {
+        increaseQuality()
+        if (isSellDateReached(11)) {
+            increaseQuality()
+        }
+        if (isSellDateReached(6)) {
+            increaseQuality()
+        }
+
+        if (isSellDateReached(0)) {
+            quality = 0
+        }
+    }
+}
+
+open class AgedBrie(sellIn: Int, quality: Int) :
+    ShopItem("Aged Brie", sellIn, quality) {
+    override fun updateQuality() {
+        increaseQuality()
+    }
+}
+
+
+open class Conjured(sellIn: Int, quality: Int) :
+    ShopItem("Conjured Mana Cake", sellIn, quality) {
+    override fun updateQuality() {
+        decreaseQuality(2)
     }
 }
