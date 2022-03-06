@@ -172,13 +172,17 @@ internal class GildedRoseTest {
 
     @Test
     fun `Verify "Conjured" items degrade in quality twice as fast as normal items`() {
-        val item = Conjured(3, 6)
-        val app = GildedRose(arrayOf(item))
+        val items = arrayOf<Item>(
+            Conjured( 3, 6),
+            Conjured( 0, 4))
+        val app = GildedRose(items)
 
         app.updateQuality()
 
-        assertThat(item).extracting(Item::sellIn, Item::quality)
-            .containsExactly(2, 4)
+        assertThat(items).usingRecursiveFieldByFieldElementComparator().containsExactly(
+            Conjured( 2, 4),
+            Conjured( -1, 0))
+
     }
 }
 
