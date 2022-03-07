@@ -42,6 +42,9 @@ open class ShopItem(name: String, sellIn: Int, quality: Int) : Item(name, sellIn
         if (quality > MIN_ITEM_QUALITY) {
             quality -= value
         }
+        if (quality < MIN_ITEM_QUALITY) {
+            quality = MIN_ITEM_QUALITY
+        }
         voidItemQualityWhenSellDateReached()
     }
 
