@@ -1,8 +1,9 @@
 package com.gildedrose
 
 
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
-import org.assertj.core.api.Assertions.*
 
 
 //
@@ -47,7 +48,6 @@ import org.assertj.core.api.Assertions.*
 //
 
 
-
 @Suppress("DANGEROUS_CHARACTERS")
 internal class GildedRoseTest {
 
@@ -63,14 +63,16 @@ internal class GildedRoseTest {
     fun `Verify that at the end of each day GildedRose lowers both Quality and SellIn for every item`() {
         val items = arrayOf<Item>(
             ShopItem("item1", 1, 1),
-            ShopItem("item2", 2, 2))
+            ShopItem("item2", 2, 2)
+        )
         val app = GildedRose(items)
 
         app.updateQuality()
 
         assertThat(items).usingRecursiveFieldByFieldElementComparator().containsExactly(
             ShopItem("item1", 0, 0),
-            ShopItem("item2", 1, 1))
+            ShopItem("item2", 1, 1)
+        )
     }
 
     @Test
@@ -96,7 +98,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `Verify that "Aged Brie" increases in quality the older it gets`() {
-        val item = AgedBrie( 0, 5)
+        val item = AgedBrie(0, 5)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -128,7 +130,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `Verify that "Backstage passes to a TAFKAL80ETC concert" increases in quality as its SellIn value approaches`() {
-        val item = BackstagePass( 15, 20)
+        val item = BackstagePass(15, 20)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -139,7 +141,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `Verify that "Backstage passes to a TAFKAL80ETC concert" increases double in quality as its SellIn value approaches`() {
-        val item = BackstagePass( 10, 20)
+        val item = BackstagePass(10, 20)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -150,7 +152,7 @@ internal class GildedRoseTest {
 
     @Test
     fun `Verify that "Backstage passes to a TAFKAL80ETC concert" increases trice in Quality as its SellIn value approaches`() {
-        val item = BackstagePass( 5, 20)
+        val item = BackstagePass(5, 20)
         val app = GildedRose(arrayOf(item))
 
         app.updateQuality()
@@ -173,15 +175,17 @@ internal class GildedRoseTest {
     @Test
     fun `Verify "Conjured" items degrade in quality twice as fast as normal items`() {
         val items = arrayOf<Item>(
-            Conjured( 3, 6),
-            Conjured( 0, 4))
+            Conjured(3, 6),
+            Conjured(0, 4)
+        )
         val app = GildedRose(items)
 
         app.updateQuality()
 
         assertThat(items).usingRecursiveFieldByFieldElementComparator().containsExactly(
-            Conjured( 2, 4),
-            Conjured( -1, 0))
+            Conjured(2, 4),
+            Conjured(-1, 0)
+        )
 
     }
 }

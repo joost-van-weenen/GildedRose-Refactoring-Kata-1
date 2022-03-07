@@ -1,6 +1,7 @@
 package com.gildedrose
 
 class GildedRose(private var items: Array<Item>) {
+
     init {
         if (items.any { it !is ShopItem }) {
             throw IllegalArgumentException("Items may only contain objects of type ShopItem")
@@ -27,6 +28,7 @@ private const val MAX_ITEM_QUALITY = 50
 private const val MIN_ITEM_QUALITY = 0
 
 open class ShopItem(name: String, sellIn: Int, quality: Int) : Item(name, sellIn, quality) {
+
     open fun updateQuality() {
         decreaseQuality()
         voidItemQualityWhenSellDateReached()
@@ -63,9 +65,11 @@ open class ShopItem(name: String, sellIn: Int, quality: Int) : Item(name, sellIn
 
 
 open class Sulfuras : ShopItem("Sulfuras, Hand of Ragnaros", 0, LEGENDARY_ITEM_QUALITY) {
+
     override fun decreaseSellIn() {
         // Never update sellIn value
     }
+
     override fun updateQuality() {
         // Never updates its quality
     }
@@ -73,6 +77,7 @@ open class Sulfuras : ShopItem("Sulfuras, Hand of Ragnaros", 0, LEGENDARY_ITEM_Q
 
 open class BackstagePass(sellIn: Int, quality: Int) :
     ShopItem("Backstage passes to a TAFKAL80ETC concert", sellIn, quality) {
+
     override fun updateQuality() {
         increaseQuality()
         if (isSellDateReached(11)) {
@@ -87,6 +92,7 @@ open class BackstagePass(sellIn: Int, quality: Int) :
 
 open class AgedBrie(sellIn: Int, quality: Int) :
     ShopItem("Aged Brie", sellIn, quality) {
+
     override fun updateQuality() {
         increaseQuality()
     }
@@ -94,6 +100,7 @@ open class AgedBrie(sellIn: Int, quality: Int) :
 
 open class Conjured(sellIn: Int, quality: Int) :
     ShopItem("Conjured Mana Cake", sellIn, quality) {
+
     override fun updateQuality() {
         decreaseQuality(2)
     }
